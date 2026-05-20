@@ -1,2 +1,2 @@
-# casamia
-semi-project
+# semi_project
+academy_semi_project
