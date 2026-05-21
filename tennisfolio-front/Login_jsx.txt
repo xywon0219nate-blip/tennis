@@ -20,10 +20,11 @@ function Login(props) {
 		setErrors({ id: "", pwd: "" }); // 입력 시 에러 초기화
 	};
 
-	// 로그인 제출 핸들러 (서버 없이  임시 버전)
+	// 로그인 제출 핸들러
 	const handleLoginSubmit = async (e) => {
 		e.preventDefault(); // 페이지 새로고침 방지
 
+		// 유효성 검사 (빈칸 확인 및 포커스 이동)
 		if (!formData.id) {
 			setErrors((prev) => ({ ...prev, id: "아이디를 입력해주세요" }));
 			idRef.current.focus();
@@ -35,22 +36,6 @@ function Login(props) {
 			return;
 		}
 
-		// -------------------------------------------------------------
-		// [임시 변경] 백엔드 서버(9000번 포트) 대용 가짜 로그인 로직
-		// -------------------------------------------------------------
-		if (formData.id === "test" && formData.pwd === "1234") {
-			alert(`${formData.id}님, 로그인 되었습니다. (임시 모드)`);
-
-			// 부모 상태 업데이트 함수 실행 (로그인 상태 반영)
-			props.setIsLoggedIn(true);
-			props.setUserId(formData.id);
-
-			handleClose(); // 성공 시 모달창 닫기
-		} else {
-			alert("로그인에 실패하셨습니다.\n(테스트 아이디: test / 비밀번호: 1234)");
-		}
-
-		/* 
 		try {
 			// 백엔드 서버로 임시 로그인 요청
 			const response = await fetch("http://localhost:9000/login", {
@@ -62,21 +47,23 @@ function Login(props) {
 				console.error(`HTTP Error: ${response.status}`);
 				if (response.status === 404) {
 					alert(
-						"서버가 localhost:9000 에서 실행 중인지 확인하세요.",
+						"❌ 서버를 찾을 수 없습니다.\n서버가 localhost:9000 에서 실행 중인지 확인하세요.",
 					);
 				}
 				return;
 			}
 
+			// 이제 안전하게 JSON 파싱
 			const result = await response.json();
 
 			if (result.isLogin) {
 				alert(`${formData.id}님, 로그인 되었습니다.`);
 
+				// 부모(NavGroup.jsx) 상태 업데이트 함수 실행
 				props.setIsLoggedIn(true);
 				props.setUserId(formData.id);
 
-				handleClose(); 
+				handleClose(); // 성공 시 모달창 닫기
 			} else {
 				alert("로그인에 실패하셨습니다.");
 			}
@@ -84,7 +71,6 @@ function Login(props) {
 			console.error("서버 통신 에러:", err);
 			alert("서버 연결에 실패했습니다.");
 		}
-		*/
 	};
 
 	return (
@@ -129,6 +115,7 @@ function Login(props) {
 							</span>
 						</Form.Group>
 
+						{/* 버튼 타입을 submit으로 설정해 엔터키 입력 지원 */}
 						<Button type="submit" className="loginBtn mt-4">
 							로그인
 						</Button>
