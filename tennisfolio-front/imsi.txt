@@ -1,32 +1,28 @@
 import { useState, useRef } from "react";
 import { Nav, Form, Modal, Button } from "react-bootstrap";
-import { axiosPost } from "../../utils/dataAxios.js";
-import { useAuthStore } from "../../store/useAuthStore.js";
 
 import "../css/Nav.css";
 
-function Login() {
+function Login(props) {
 	const [show, setShow] = useState(false);
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
 
-	// [정예원] Ref로 빈칸 제출 확인
 	const idRef = useRef(null);
 	const pwdRef = useRef(null);
 
-	// [정예원] useAuthStore 상태관리
 	const [formData, setFormData] = useState({ id: "", pwd: "" });
 	const [errors, setErrors] = useState({ id: "", pwd: "" });
-	const login = useAuthStore((s) => s.login);
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target;
 		setFormData({ ...formData, [name]: value });
-		setErrors({ id: "", pwd: "" }); // [정예원] 입력 시 에러 초기화
+		setErrors({ id: "", pwd: "" }); // 입력 시 에러 초기화
 	};
 
+	// 로그인 제출 핸들러 (서버 없이  임시 버전)
 	const handleLoginSubmit = async (e) => {
-		e.preventDefault(); // [정예원] 페이지 새로고침 방지
+		e.preventDefault(); // 페이지 새로고침 방지
 
 		if (!formData.id) {
 			setErrors((prev) => ({ ...prev, id: "아이디를 입력해주세요" }));
@@ -39,22 +35,56 @@ function Login() {
 			return;
 		}
 
-		const result = await axiosPost("/login", formData);
-		console.log("서버 응답:", result);
+		// -------------------------------------------------------------
+		// [임시 변경] 백엔드 서버(9000번 포트) 대용 가짜 로그인 로직
+		// -------------------------------------------------------------
+		if (formData.id === "test" && formData.pwd === "1234") {
+			alert(`${formData.id}님, 로그인 되었습니다. (임시 모드)`);
 
-		if (result.isLogin) {
-			// [정예원] Zustand store에 로그인 정보 저장
-			login({
-				userId: formData.id,
-				role: result.role,
-				accessToken: result.token,
-				isLogin: result.isLogin,
-			});
-			handleClose();
-			setFormData({ id: "", pwd: "" });
+			// 부모 상태 업데이트 함수 실행 (로그인 상태 반영)
+			props.setIsLoggedIn(true);
+			props.setUserId(formData.id);
+
+			handleClose(); // 성공 시 모달창 닫기
 		} else {
-			alert("로그인에 실패하셨습니다.");
+			alert("로그인에 실패하셨습니다.\n(테스트 아이디: test / 비밀번호: 1234)");
 		}
+
+		/* 
+		try {
+			// 백엔드 서버로 임시 로그인 요청
+			const response = await fetch("http://localhost:9000/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(formData),
+			});
+			if (!response.ok) {
+				console.error(`HTTP Error: ${response.status}`);
+				if (response.status === 404) {
+					alert(
+						"서버가 localhost:9000 에서 실행 중인지 확인하세요.",
+					);
+				}
+				return;
+			}
+
+			const result = await response.json();
+
+			if (result.isLogin) {
+				alert(`${formData.id}님, 로그인 되었습니다.`);
+
+				props.setIsLoggedIn(true);
+				props.setUserId(formData.id);
+
+				handleClose(); 
+			} else {
+				alert("로그인에 실패하셨습니다.");
+			}
+		} catch (err) {
+			console.error("서버 통신 에러:", err);
+			alert("서버 연결에 실패했습니다.");
+		}
+		*/
 	};
 
 	return (
@@ -70,7 +100,7 @@ function Login() {
 					</button>
 				</Modal.Header>
 				<Modal.Body>
-					{/* [정예원] 폼 전송 이벤트 연결 */}
+					{/* 폼 전송 이벤트 연결 */}
 					<Form onSubmit={handleLoginSubmit}>
 						<Form.Group>
 							<Form.Label>아이디</Form.Label>
@@ -87,8 +117,6 @@ function Login() {
 						</Form.Group>
 						<Form.Group className="mt-3">
 							<Form.Label>비밀번호</Form.Label>
-
-							{/* [정예원] name, value, ref, onChange 연결 */}
 							<Form.Control
 								type="password"
 								name="pwd"
@@ -101,7 +129,6 @@ function Login() {
 							</span>
 						</Form.Group>
 
-						{/* [정예원] 버튼 타입 -> submit */}
 						<Button type="submit" className="loginBtn mt-4">
 							로그인
 						</Button>

@@ -1,5 +1,10 @@
 import axios from "axios";
 
+export const axiosData = async (url) => {
+	const response = await axios.get(url);
+	return response.data;
+};
+
 export const axiosGet = async (path) => {
 	const url = `http://localhost:9000${path}`; //params
 	const res = await axios.get(url);

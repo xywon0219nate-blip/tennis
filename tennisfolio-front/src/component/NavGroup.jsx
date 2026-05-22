@@ -1,6 +1,7 @@
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuthStore } from "../../store/useAuthStore.js";
 
 import Login from "./Login.jsx";
 import SignUp from "./SignUp.jsx";
@@ -23,9 +24,10 @@ function NavGroup() {
 	const handleShow = () => setShow(true);
 	const handleClose = () => setShow(false);
 
-	// 💡 [추가된 부분] 로그인 상태와 로그인한 유저 아이디를 기억할 공간
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [userId, setUserId] = useState("");
+	// [정예원] useAuthStore 이용하는 방식으로 상태관리. 로그인/로그아웃 수정
+	const isLogin = useAuthStore((s) => s.isLogin);
+	const userId = useAuthStore((s) => s.userId);
+	const logout = useAuthStore((s) => s.logout);
 
 	const row = {
 		display: "flex",
@@ -35,14 +37,21 @@ function NavGroup() {
 	};
 	const bold = { fontSize: "20px", fontWeight: "700" };
 
+	// [정예원] 로그아웃 처리를 함수로 추가
+	const handleLogout = () => {
+		logout();
+		alert("로그아웃 되었습니다.");
+	};
+
 	return (
 		<>
 			<Navbar bg="black" variant="dark" className="loginBar">
 				<Container style={{ maxWidth: "1550px" }}>
 					<Navbar.Brand href="#home"></Navbar.Brand>
+					{/* [정예원] 로그인 부분만 일부 수정 */}
 					<Nav className="ml-auto login">
-						{/* 💡 [수정된 부분] 로그인 상태에 따라 다르게 보여주기 */}
-						{isLoggedIn ? (
+						{/* [정예원] 여기부터 ~*/}
+						{isLogin ? (
 							<>
 								<span
 									className="loginLink"
@@ -50,25 +59,17 @@ function NavGroup() {
 								>
 									{userId}님 환영합니다
 								</span>
-								<Nav.Link
-									href="#"
-									className="loginLink"
-									onClick={() => {
-										setIsLoggedIn(false);
-										setUserId("");
-										alert("로그아웃 되었습니다.");
-									}}
-								>
+								<Nav.Link href="#" className="loginLink" onClick={handleLogout}>
 									로그아웃
 								</Nav.Link>
 							</>
 						) : (
 							<>
-								{/* 💡 Login 컴포넌트로 상태를 바꿀 수 있는 함수(리모컨) 전달 */}
-								<Login setIsLoggedIn={setIsLoggedIn} setUserId={setUserId} />
+								<Login />
 								<SignUp />
 							</>
 						)}
+						{/* [정예원] ~ 여기까지 */}
 
 						<Nav.Link href="#" className="loginLink">
 							고객센터
