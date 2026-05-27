@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Nav, Form, Modal, Button } from "react-bootstrap";
 import { axiosPost } from "../../utils/dataAxios.js";
 import { useAuthStore } from "../../store/useAuthStore.js";
@@ -6,9 +7,23 @@ import { useAuthStore } from "../../store/useAuthStore.js";
 import "../css/Nav.css";
 
 function Login() {
+	const location = useLocation();
+	const navigate = useNavigate();
 	const [show, setShow] = useState(false);
-	const handleClose = () => setShow(false);
+	const handleClose = () => {
+		setShow(false);
+		if (location.pathname === "/login") {
+			navigate(-1); // 이전 페이지로 돌아가기
+		}
+	};
 	const handleShow = () => setShow(true);
+
+	// /login URL로 접속 시 자동으로 모달 열기
+	useEffect(() => {
+		if (location.pathname === "/login") {
+			setShow(true);
+		}
+	}, [location.pathname]);
 
 	// [정예원] Ref로 빈칸 제출 확인
 	const idRef = useRef(null);
