@@ -1,0 +1,11 @@
+import express from "express";
+import * as controller from "../controller/carts.js";
+
+const router = express();
+
+
+
+router.post("/add", controller.addToCart);
+router.get("/list", controller.getCartItems);
+
+export default router;
