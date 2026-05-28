@@ -12,6 +12,7 @@ CREATE DATABASE IF NOT EXISTS `tennisfolio`
 
 USE `tennisfolio`;
 
+
 -- ============================================================
 --  1. member   ←  shoppy.member
 --     쇼핑몰 회원 테이블 (주문/장바구니/QnA의 부모)

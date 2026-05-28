@@ -5,14 +5,49 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
-import { useState } from "react";
-import cardData from "../data/cardData.js";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+// import cardData from "../data/cardData.js";
 
 function CardList() {
-	let [tennisCard] = useState(cardData);
+	// const [tennisCard] = useState(cardData);
+	const [tennisCard, setTennisCard] = useState([]);
+	const location = useLocation();
+
+	// 스크롤
+	// useEffect(() => {
+	// 	if (location.pathname === "/cardLists") {
+	// 		const el = document.getElementById("cardLists");
+	// 		if (el) {
+	// 			el.scrollIntoView({ behavior: "smooth", block: "start" });
+	// 		}
+	// 	}
+	// }, [location.pathname]);
+
+	// 스크롤
+	useEffect(() => {
+		if (location.pathname === "/cardLists") {
+			setTimeout(() => {
+				const el = document.getElementById("cardLists");
+				if (el) {
+					el.scrollIntoView({ behavior: "smooth", block: "start" });
+				}
+			}, 500);
+		}
+	}, [location.pathname]);
+	// 데이터 로딩
+	useEffect(() => {
+		fetch("http://localhost:4000/cardLists")
+			.then((res) => res.json())
+			.then((data) => setTennisCard(data))
+			.catch((err) => console.error("카드 데이터 불러오기 실패:", err));
+	}, []);
 
 	return (
-		<div style={{ margin: "150px auto 150px", maxWidth: "1600px" }}>
+		<div
+			id="cardLists"
+			style={{ margin: "150px auto 150px", maxWidth: "1600px" }}
+		>
 			<div className="categoryMore">
 				<h3>취향저격! 요즘 테니스</h3>
 				<p className="more">
@@ -21,6 +56,7 @@ function CardList() {
 			</div>
 			<div className="cardWrap">
 				<Swiper
+					key={tennisCard.length}
 					modules={[Autoplay, Navigation]}
 					spaceBetween={30}
 					speed={500}
@@ -35,7 +71,7 @@ function CardList() {
 					{tennisCard.map((item, i) => (
 						<SwiperSlide key={i}>
 							<Cardbox
-								imgUrl={item.imgUrl}
+								imgUrl={item.img_url}
 								title={item.title}
 								tag={item.tag}
 								hash={item.hash}

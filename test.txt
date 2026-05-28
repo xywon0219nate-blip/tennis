@@ -1,0 +1,18 @@
+2026-05-27 update
+[Front]
+> Login.jsx 수정 -> 라우팅 /login이 이제 실행 가능
+- 주석으로 수정 위치 확인 가능
+
+> NavGroup.jsx 수정 
+- 내용 수정 및 변경
+
+> CardListPage.jsx 추가
+- /cardLists로 이동(스크롤?) 가능하도록 라우팅 처리
+
+
+[Server]
+> cardLists.js routes/controller/repository 생성
+> app.js 내용 추가 
+
+
+-- 수정사항이나 오류가 있으면 추가로 적어주세요

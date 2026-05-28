@@ -2,6 +2,7 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore.js";
+import CardListPage from "./CardListPage.jsx"; //cardList를 위해 새로운 페이지 추가 2026-05-27
 
 import Login from "./Login.jsx";
 import SignUp from "./SignUp.jsx";
@@ -24,7 +25,6 @@ function NavGroup() {
 	const handleShow = () => setShow(true);
 	const handleClose = () => setShow(false);
 
-	// [정예원] useAuthStore 이용하는 방식으로 상태관리. 로그인/로그아웃 수정
 	const isLogin = useAuthStore((s) => s.isLogin);
 	const userId = useAuthStore((s) => s.userId);
 	const logout = useAuthStore((s) => s.logout);
@@ -37,7 +37,6 @@ function NavGroup() {
 	};
 	const bold = { fontSize: "20px", fontWeight: "700" };
 
-	// [정예원] 로그아웃 처리를 함수로 추가
 	const handleLogout = () => {
 		logout();
 		alert("로그아웃 되었습니다.");
@@ -48,9 +47,7 @@ function NavGroup() {
 			<Navbar bg="black" variant="dark" className="loginBar">
 				<Container style={{ maxWidth: "1550px" }}>
 					<Navbar.Brand href="#home"></Navbar.Brand>
-					{/* [정예원] 로그인 부분만 일부 수정 */}
 					<Nav className="ml-auto login">
-						{/* [정예원] 여기부터 ~*/}
 						{isLogin ? (
 							<>
 								<span
@@ -66,11 +63,14 @@ function NavGroup() {
 						) : (
 							<>
 								<Login />
-								<SignUp />
+								<Nav.Link
+									className="loginLink"
+									onClick={() => navigate("/signup")}
+								>
+									회원가입
+								</Nav.Link>
 							</>
 						)}
-						{/* [정예원] ~ 여기까지 */}
-
 						<Nav.Link href="#" className="loginLink">
 							고객센터
 						</Nav.Link>
@@ -189,6 +189,15 @@ function NavGroup() {
 				<Route path="/detail/best/acc/:id" element={<Detail />} />
 				<Route path="/detail/best/shoes/:id" element={<Detail />} />
 				<Route path="/cart" element={<Cart />} />
+				{/* cardLists 부분 수정했습니다. 2026-05-27 */}
+				<Route
+					path="/cardLists"
+					element={
+						<CardListPage isClicked={isClicked} setIsClicked={setIsClicked} />
+					}
+				/>
+				{/* [회원가입] 회원가입 페이지 라우트 등록 */}
+				<Route path="/signup" element={<SignUp />} />
 			</Routes>
 		</>
 	);
